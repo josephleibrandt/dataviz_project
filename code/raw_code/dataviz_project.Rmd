@@ -35,7 +35,7 @@ The data we'll be using for this part of the project were downloaded from [kaggl
 First, we'll read the data in from our `data/raw_data` directory.
 
 ```{r pet-data, warning=FALSE} 
-pets <- read.csv("data/raw_data/seattle_pet_licenses.csv", stringsAsFactors = FALSE)
+pets <- read.csv("dataviz_project/data/raw_data/seattle_pet_licenses.csv", stringsAsFactors = FALSE)
 ```
 
 ## Explore the Data
@@ -43,6 +43,8 @@ pets <- read.csv("data/raw_data/seattle_pet_licenses.csv", stringsAsFactors = FA
 ```{r pet-explore, warning=FALSE} 
 ## Include code here to explore the data 
 ## and answer the questions in the exercise
+count(pets, animal_s_name)
+count(pets, species)
 ```
 
 ## Visualize the Data
@@ -50,15 +52,15 @@ pets <- read.csv("data/raw_data/seattle_pet_licenses.csv", stringsAsFactors = FA
 ```{r pet-barchart, warning=FALSE} 
 ## visual breakdown of how many of each species 
 ## are included in the dataset
-ggplot(DATASET) +
-  geom_bar(aes(x=VARIABLE))
+ggplot(pets) +
+  geom_bar(aes(x=species))
 ```
 
 ```{r pet-cat-table, warning=FALSE} 
 ## Table: Most frequent Cat Name 
-DATASET %>% 
-  filter(species == "SPECIES", VARIABLE != "") %>%
-  group_by(VARIABLE) %>% 
+pets %>% 
+  filter(species == "Cat", animal_s_name != "") %>%
+  group_by(animal_s_name) %>% 
   summarise(n = n()) %>% 
   arrange(-n) %>%
   top_n(n = 10) %>%
@@ -68,6 +70,13 @@ DATASET %>%
 ```{r pet-dog-table, warning=FALSE} 
 ## Table: Most frequent Dog Name
 ## ADD CODE!
+pets %>% 
+  filter(species == "Dog", animal_s_name != "") %>%
+  group_by(animal_s_name) %>% 
+  summarise(n = n()) %>% 
+  arrange(-n) %>%
+  top_n(n = 10) %>%
+  knitr::kable(., caption = "Top 10 Dog Names in Seattle")
 ```
 
 ```{r pet-linechart, warning=FALSE} 
@@ -78,12 +87,12 @@ pets$ym <- as.yearmon(pets$date, "%y%m")
 ## how the number of licenses recorded has changed over time
 pets %>%
   ## group by yearmonth (`ym`)
-  function_name(VARIABLE) %>% 
+  group_by(ym) %>% 
   ## count number within each group
-  function_name(n=n()) %>%
-  ggplot(., aes(VARIABLE, n)) + 
+  count(n=n()) %>%
+  ggplot(., aes(ym, n)) + 
   ## geom name for line chart
-  geom_GEOM() +
+  geom_line() +
   scale_x_yearmon() + 
   xlab("") + 
   ylab("Number of licenses")
@@ -91,7 +100,13 @@ pets %>%
 
 ```{r pet-plot, warning=FALSE} 
 ### Explore the data -- create your own plot!
-
+pets %>% 
+  filter(species == "Dog", primary_breed != "") %>%
+  group_by(primary_breed) %>% 
+  summarise(n = n()) %>% 
+  arrange(-n) %>%
+  top_n(n = 10) %>%
+  knitr::kable(., caption = "Top 10 Dog Breeds in Seattle")
 ```
 
 # Part 2: Explanatory Data Analysis
